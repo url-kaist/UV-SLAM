@@ -7,7 +7,7 @@ Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points
 
 ## Results
 - Mapping results for *MH_05_difficult* in the [EuRoC datasets](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets) 
-- All mapping results for the EuRoC datasets is available in [here](https://github.com/tp02134/UV-SLAM/blob/main/mapping%20result.pdf)
+- All mapping results for the EuRoC datasets is available in [here](https://github.com/tp02134/UV-SLAM/blob/main/mapping_result.pdf)
 
 | [ALVIO](https://link.springer.com/chapter/10.1007/978-981-16-4803-8_19) | [Previous work](https://ieeexplore.ieee.org/document/9560911) | UV-SLAM |
 | ------------- | ------------- | ------------- |
