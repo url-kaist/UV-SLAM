@@ -1,7 +1,9 @@
 # UV-SLAM
 Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping"*, which is accepted in RA-L with ICRA2022 option
 
-Paper: https://arxiv.org/pdf/2112.13515.pdf
+Paper
+- IEEE Early Access: https://ieeexplore.ieee.org/document/9672726
+- Arxiv: https://arxiv.org/pdf/2112.13515.pdf
 
 | [ALVIO](https://link.springer.com/chapter/10.1007/978-981-16-4803-8_19)  | UV-SLAM |
 | ------------- | ------------- |
