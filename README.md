@@ -1,9 +1,12 @@
 # UV-SLAM
 Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping"*, which is accepted in RA-L with ICRA2022 option
 
-Paper
-- IEEE Early Access: https://ieeexplore.ieee.org/document/9672726
-- arXiv: https://arxiv.org/pdf/2112.13515.pdf
+<div align="left">
+  
+  [![journal](https://img.shields.io/badge/paper-RA_L%202021-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
+  [![arxiv](https://img.shields.io/badge/arXiv-2103.01655-B31B1B.svg)](https://arxiv.org/abs/2112.13515)
+
+</div>
 
 | [ALVIO](https://link.springer.com/chapter/10.1007/978-981-16-4803-8_19)  | UV-SLAM |
 | ------------- | ------------- |
@@ -16,5 +19,20 @@ Paper
 | [ALVIO](https://link.springer.com/chapter/10.1007/978-981-16-4803-8_19) | [Previous work](https://ieeexplore.ieee.org/document/9560911) | UV-SLAM |
 | ------------- | ------------- | ------------- |
 | <img src="https://user-images.githubusercontent.com/42729711/143398005-afce16e2-c3dc-4c3b-af6e-adade9a45d56.png">  | <img src="https://user-images.githubusercontent.com/42729711/143397993-edb67494-b00c-47e1-8591-532cf0c4cc46.png">  |  <img src="https://user-images.githubusercontent.com/42729711/143398028-9cf349f8-510e-4709-9859-4ff752b47f13.png">  | 
+
+## Citation
+```
+@article{lim2022uv,
+  title={UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping},
+  author={Lim, Hyunjun and Jeon, Jinwoo and Myung, Hyun},
+  journal={IEEE Robotics and Automation Letters},
+  year={2022},
+  publisher={IEEE},
+  volume={7},
+  number={2},
+  pages={1518-1525},
+  doi={10.1109/LRA.2022.3140816}
+}
+```
 
 ### Code will be coming soon!
