@@ -3,8 +3,8 @@ Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points
 
 <div align="left">
   
-  [![journal](https://img.shields.io/badge/paper-RA_L%202021-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
-  [![arxiv](https://img.shields.io/badge/arXiv-2103.01655-B31B1B.svg)](https://arxiv.org/abs/2112.13515)
+  [![journal](https://img.shields.io/badge/RA_L-9672726-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
+  [![arxiv](https://img.shields.io/badge/arXiv-2112.13515-B31B1B.svg)](https://arxiv.org/abs/2112.13515)
 
 </div>
 
