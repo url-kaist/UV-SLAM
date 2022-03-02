@@ -5,6 +5,7 @@ Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points
   
   [![journal](https://img.shields.io/badge/RA_L-9672726-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
   [![arxiv](https://img.shields.io/badge/arXiv-2112.13515-B31B1B.svg)](https://arxiv.org/abs/2112.13515)
+  [![video](https://img.shields.io/badge/YouTube-B31B1B.svg)](https://youtu.be/jyUphjBxAnM)
 
 </div>
 
