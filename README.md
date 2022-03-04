@@ -35,5 +35,14 @@ Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points
   doi={10.1109/LRA.2022.3140816}
 }
 ```
+```
+@inproceedings{lim2021avoiding,
+  title={Avoiding Degeneracy for Monocular Visual {SLAM} with Point and Line Features},
+  author={Lim, Hyunjun and Kim, Yeeun and Jung, Kwangik and Hu, Sumin and Myung, Hyun},
+  booktitle={Proc. IEEE International Conference on Robotics and Automation (ICRA)},
+  pages={11675--11681},
+  year={2021},
+}
+```
 
 ### Code will be coming soon!
