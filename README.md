@@ -72,7 +72,7 @@ If you use the algorithm in an academic context, please cite the following publi
   author={Lim, Hyunjun and Kim, Yeeun and Jung, Kwangik and Hu, Sumin and Myung, Hyun},
   booktitle={Proc. IEEE International Conference on Robotics and Automation (ICRA)},
   pages={11675--11681},
-  year={2021},
+  year={2021}
 }
 ```
 
