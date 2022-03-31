@@ -2003,7 +2003,7 @@ void LineFeatureTracker::getVPHypVia2Lines(vector<KeyLine> cur_keyLine, vector<V
 {
     int num = cur_keyLine.size();
 
-    double noiseRatio;
+    double noiseRatio = 0.5;
     double p = 1.0 / 3.0 * pow( 1.0 - noiseRatio, 2 );
 
     double confEfficience = 0.9999;
