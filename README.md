@@ -2,6 +2,11 @@
 Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping"*, which is published in IEEE RA-L with ICRA'22 presentation option.  
 For more details, please refer to: https://doi.org/10.1109/LRA.2022.3140816
 
+[![journal](https://img.shields.io/badge/RA_L-9672726-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
+[![arxiv](https://img.shields.io/badge/arXiv-2112.13515-B31B1B.svg)](https://arxiv.org/abs/2112.13515)
+[![video](https://img.shields.io/badge/YouTube-B31B1B.svg)](https://youtu.be/jyUphjBxAnM)
+
+
 <center>
 
 | [ALVIO](https://link.springer.com/chapter/10.1007/978-981-16-4803-8_19)  | UV-SLAM |
@@ -72,7 +77,7 @@ If you use the algorithm in an academic context, please cite the following publi
   author={Lim, Hyunjun and Kim, Yeeun and Jung, Kwangik and Hu, Sumin and Myung, Hyun},
   booktitle={Proc. IEEE International Conference on Robotics and Automation (ICRA)},
   pages={11675--11681},
-  year={2021},
+  year={2021}
 }
 ```
 
