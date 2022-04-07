@@ -349,11 +349,6 @@ void FeatureManager::setLineOrtho(vector<Vector4d> &get_lineOrtho, Vector3d Ps[]
 //        cout << it_line_per_id.orthonormal_vec[2] << " -> " << get_lineOrtho.at(line_feature_index)[2] << endl;
 //        cout << it_line_per_id.orthonormal_vec[3] << " -> " << get_lineOrtho.at(line_feature_index)[3] << endl;
 
-        it_per_id.orthonormal_vec[0] = get_lineOrtho.at(line_feature_index)[0];
-        it_per_id.orthonormal_vec[1] = get_lineOrtho.at(line_feature_index)[1];
-        it_per_id.orthonormal_vec[2] = get_lineOrtho.at(line_feature_index)[2];
-        it_per_id.orthonormal_vec[3] = get_lineOrtho.at(line_feature_index)[3];
-
         AngleAxisd roll(it_per_id.orthonormal_vec(0), Vector3d::UnitX());
         AngleAxisd pitch(it_per_id.orthonormal_vec(1), Vector3d::UnitY());
         AngleAxisd yaw(it_per_id.orthonormal_vec(2), Vector3d::UnitZ());
@@ -383,14 +378,47 @@ void FeatureManager::setLineOrtho(vector<Vector4d> &get_lineOrtho, Vector3d Ps[]
         Vector3d n_c = l_c.block<3,1>(0,0);
         Vector3d d_c = l_c.block<3,1>(3,0);
 
-        double dist_w = n_w.norm()/d_w.norm();
-        double dist_c = n_c.norm()/d_c.norm();
+Matrix4d L_c;
+        L_c.setZero();
+        L_c.block<3,3>(0,0) = Utility::skewSymmetric(n_c);
+        L_c.block<3,1>(0,3) = d_c;
+        L_c.block<1,3>(3,0) = -d_c.transpose();
 
-//        if(dist_w < 1.0)
-        if(dist_c > 30 || dist_w < 1.0)
+        double scale = 1.0;
+        Vector3d sp_2d_c = it_per_id.line_feature_per_frame[0].start_point;
+        Vector3d ep_2d_c = it_per_id.line_feature_per_frame[0].end_point;
+        Vector3d sp_2d_p_c = Vector3d(sp_2d_c(0) + scale, -scale*(ep_2d_c(0) - sp_2d_c(0))/(ep_2d_c(1) - sp_2d_c(1)) + sp_2d_c(1), 1);
+        Vector3d ep_2d_p_c = Vector3d(ep_2d_c(0) + scale, -scale*(ep_2d_c(0) - sp_2d_c(0))/(ep_2d_c(1) - sp_2d_c(1)) + ep_2d_c(1), 1);
+
+        Vector3d pi_s = sp_2d_c.cross(sp_2d_p_c);
+        Vector3d pi_e = ep_2d_c.cross(ep_2d_p_c);
+
+        Vector4d pi_s_4d, pi_e_4d;
+        pi_s_4d.head(3) = pi_s;
+        pi_s_4d(3) = 1;
+        pi_e_4d.head(3) = pi_e;
+        pi_e_4d(3) = 1;
+
+        Vector4d D_s = L_c * pi_s_4d;
+        Vector4d D_e = L_c * pi_e_4d;
+        Vector3d D_s_3d(D_s(0)/D_s(3), D_s(1)/D_s(3), D_s(2)/D_s(3));
+        Vector3d D_e_3d(D_e(0)/D_e(3), D_e(1)/D_e(3), D_e(2)/D_e(3));
+
+        Vector3d D_s_w = R_wc * D_s_3d + t_wc;
+        Vector3d D_e_w = R_wc * D_e_3d + t_wc;
+
+        if(D_s_3d(2) < 0 || D_e_3d(2) < 0)
+        {
             it_per_id.solve_flag = 2;
+            continue;
+        }
         else
             it_per_id.solve_flag = 1;
+
+        it_per_id.orthonormal_vec[0] = get_lineOrtho.at(line_feature_index)[0];
+        it_per_id.orthonormal_vec[1] = get_lineOrtho.at(line_feature_index)[1];
+        it_per_id.orthonormal_vec[2] = get_lineOrtho.at(line_feature_index)[2];
+        it_per_id.orthonormal_vec[3] = get_lineOrtho.at(line_feature_index)[3];
     }
 }
 
