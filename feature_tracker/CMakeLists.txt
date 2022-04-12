@@ -41,5 +41,5 @@ add_executable(feature_tracker
     src/utility.cpp
     )
 
-target_link_libraries(feature_tracker ${catkin_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(feature_tracker ${catkin_LIBRARIES} ${OpenCV_LIBS} ${ELSED_LIB})
 
