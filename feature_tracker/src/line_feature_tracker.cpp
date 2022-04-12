@@ -11,6 +11,7 @@ unsigned int matched_count = 0;
 int keyLine_id = 0;
 int img_num = 0;
 
+upm::ELSED elsed;
 
 LineFeatureTracker::LineFeatureTracker()
 {
@@ -52,6 +53,18 @@ void LineFeatureTracker::readImage4Line(const Mat &_img, double _cur_time)
     cvtColor(img2, img2, CV_GRAY2BGR);
 //    cvtColor(merged_img, merged_img, CV_GRAY2BGR);
 
+    vector<Vector3d> para_vector;
+    vector<double> length_vector;
+    vector<double> orientation_vector;
+    vector<std::vector<Vector3d> > vpHypo;
+    vector<std::vector<double> > sphereGrid;
+    vector<Vector3d> tmp_vps;
+    vector<Vector3d> cluster_vps;
+    vector<int> line_vp_ids;
+    vector<vector<int>> clusters;
+    vector<int> local_vp_ids;
+    double thAngle = 1.0 / 180.0 * CV_PI;
+
     if(curr_keyLine.size()>0)
     {
         vector<uchar> status;
@@ -59,25 +72,16 @@ void LineFeatureTracker::readImage4Line(const Mat &_img, double _cur_time)
         vector<Point2f> forw_start_pts, forw_end_pts;
         Mat forw_descriptor;
 
-        vector<Vector3d> para_vector;
-        vector<double> length_vector;
-        vector<double> orientation_vector;
-        vector<std::vector<Vector3d> > vpHypo;
-        vector<std::vector<double> > sphereGrid;
-        vector<Vector3d> tmp_vps;
-        vector<Vector3d> cluster_vps;
-        vector<int> line_vp_ids;
-        vector<vector<int>> clusters;
-        vector<int> local_vp_ids;
-        double thAngle = 1.0 / 180.0 * CV_PI;
-
-//        TicToc t_r;
+        TicToc t_r;
         lineExtraction(forw_img, forw_keyLine, forw_descriptor);
-//        double t_lineextraction = t_r.toc();
+        double t_extraction = t_r.toc();
         lineMatching(curr_keyLine, forw_keyLine, curr_descriptor, forw_descriptor, good_match_vector);
+        double t_matching = t_r.toc() - t_extraction;
+//        cout << t_extraction << ", " << t_matching << endl;
 //        double t_linematching = t_r.toc() - t_lineextraction;
-        lineMergingTwoPhase( curr_img, forw_img, curr_keyLine, forw_keyLine, curr_descriptor, forw_descriptor, good_match_vector );
+//        lineMergingTwoPhase( curr_img, forw_img, curr_keyLine, forw_keyLine, curr_descriptor, forw_descriptor, good_match_vector );
 //        double t_linemerging = t_r.toc() - t_linematching;
+
 
         if(forw_keyLine.size() > 1)
         {
@@ -408,7 +412,7 @@ void LineFeatureTracker::readImage4Line(const Mat &_img, double _cur_time)
         }
 //        cout << "----" << endl;
 //        for(int i = 0; i < local2id.size(); i++)
-//            cout << i << " -> " << local2id[i] << endl;
+//            cout << i << " -> " << local2id[i] << endl;\
 
         ids.clear();
         track_cnt.clear();
@@ -430,16 +434,6 @@ void LineFeatureTracker::readImage4Line(const Mat &_img, double _cur_time)
     }
     else
     {
-        vector<Vector3d> para_vector;
-        vector<double> length_vector;
-        vector<double> orientation_vector;
-        vector<std::vector<Vector3d> > vpHypo;
-        vector<std::vector<double> > sphereGrid;
-        vector<Vector3d> tmp_vps;
-        vector<vector<int>> clusters;
-        vector<int> local_vp_ids;
-        double thAngle = 3.0 / 180.0 * CV_PI;
-
         curr_img = forw_img.clone();
         lineExtraction(curr_img, curr_keyLine, curr_descriptor);
 
@@ -499,7 +493,6 @@ void LineFeatureTracker::readImage4Line(const Mat &_img, double _cur_time)
 //    {
 //        count += track_cnt[i];
 //    }
-
     prev_start_un_pts = curr_start_un_pts;
     prev_end_un_pts = curr_end_un_pts;
 
@@ -548,86 +541,137 @@ void LineFeatureTracker::lineMatching( vector<LineKL> &_prev_keyLine, vector<Lin
     bd_match->knnMatch(prev_descriptor, _curr_descriptor, matches_vector, 5);
     vector<DMatch> good_match_vector, bad_match_vector;
 
-    for(int i = 0; i < matches_vector.size(); i++){
-        double min_d = 1000;
-        int min_idx = 0;
+//    for(int i = 0; i < matches_vector.size(); i++){
+//        double min_d = 1000;
+//        int min_idx = 0;
 
-        for ( int j = 0; j < matches_vector[i].size(); j++){
-            if ( matches_vector[i][j].queryIdx == -1 || matches_vector[i][j].trainIdx == -1 )
-                continue;
+//        for ( int j = 0; j < matches_vector[i].size(); j++){
+//            if ( matches_vector[i][j].queryIdx == -1 || matches_vector[i][j].trainIdx == -1 )
+//                continue;
 
-            if ( matches_vector[i][j].queryIdx > (_prev_keyLine.size()-1)
-                || matches_vector[i][j].trainIdx > (_curr_keyLine.size()-1) )
-                continue;
+//            if ( matches_vector[i][j].queryIdx > (_prev_keyLine.size()-1)
+//                || matches_vector[i][j].trainIdx > (_curr_keyLine.size()-1) )
+//                continue;
 
-            auto query_line = _prev_keyLine.at(matches_vector[i][j].queryIdx);
-            auto train_line = _curr_keyLine.at(matches_vector[i][j].trainIdx);
+//            auto query_line = _prev_keyLine.at(matches_vector[i][j].queryIdx);
+//            auto train_line = _curr_keyLine.at(matches_vector[i][j].trainIdx);
 
-            Point2f mid_p_query = (query_line.getStartPoint() + query_line.getEndPoint())/2.;
-            Point2f mid_p_train = (train_line.getStartPoint() + train_line.getEndPoint())/2.;
+//            Point2f mid_p_query = (query_line.getStartPoint() + query_line.getEndPoint())/2.;
+//            Point2f mid_p_train = (train_line.getStartPoint() + train_line.getEndPoint())/2.;
 
-            double dist = norm( Mat(mid_p_query), Mat(mid_p_train));
+//            double dist = norm( Mat(mid_p_query), Mat(mid_p_train));
 
-            if ( min_d > dist ){
-                min_idx = j;
-                min_d = dist;
-            }
-        }
+//            if ( min_d > dist ){
+//                min_idx = j;
+//                min_d = dist;
+//            }
+//        }
 
-        // if ( fabs(mean-matches_vector[i][min_idx].distance) < std_var)
-        if ( min_d < 1000 )
-            good_match_vector.push_back(matches_vector[i][min_idx]);
+//        // if ( fabs(mean-matches_vector[i][min_idx].distance) < std_var)
+//        if ( min_d < 1000 )
+//            good_match_vector.push_back(matches_vector[i][min_idx]);
+//    }
+
+//    // remove duplicate points
+//    vector<DMatch>::iterator it_good_match_train = good_match_vector.begin();
+//    vector<DMatch>::iterator it_good_match_query;
+
+//    for ( ; it_good_match_train != good_match_vector.end()-1; ){
+//        if ( it_good_match_train == good_match_vector.end()) break;
+//        bool find_duplicate = false;
+
+//        for ( it_good_match_query = it_good_match_train+1; it_good_match_query != good_match_vector.end(); ){
+//            if ( (*it_good_match_query).trainIdx == (*it_good_match_train).trainIdx ){
+//                find_duplicate = true;
+
+//                if ( (*it_good_match_query).distance < (*it_good_match_train).distance )
+//                    good_match_vector.erase(it_good_match_train);
+//                else{
+//                    good_match_vector.erase(it_good_match_query);
+//                    it_good_match_train++;
+//                }
+
+//                break;
+//            }
+//            else
+//                it_good_match_query++;
+//        }
+
+//        if (!find_duplicate) it_good_match_train++;
+//    }
+
+//    // to visualize tracked line features
+//    vector<DMatch>::iterator it_good_match = good_match_vector.begin();
+//    m_matched_keyLines.clear();
+
+//    for ( ; it_good_match != good_match_vector.end(); ){
+//        if ( FindMatchedLine(_prev_keyLine.at(it_good_match->queryIdx),
+//                            _curr_keyLine.at(it_good_match->trainIdx), 20, 50, 0.2) ){
+//            m_matched_keyLines.push_back(_curr_keyLine.at(it_good_match->trainIdx));
+
+//            if ( m_matched_descriptor.rows == 0)
+//                m_matched_descriptor = _curr_descriptor.row(it_good_match->trainIdx);
+//            else
+//                vconcat(m_matched_descriptor, _curr_descriptor.row(it_good_match->trainIdx), m_matched_descriptor);
+
+//            it_good_match++;
+//        }
+//        else
+//            good_match_vector.erase(it_good_match);
+//    }
+
+//    _good_match_vector = good_match_vector;
+
+    std::vector<KeyLine> lbd_octave1, lbd_octave2;
+    Mat left_lbd, right_lbd;
+    for ( int i = 0; i < _prev_keyLine.size(); i++ )
+    {
+      if( _prev_keyLine[i].octave == 0 )
+      {
+        lbd_octave1.push_back( _prev_keyLine[i] );
+        left_lbd.push_back( _prev_descriptor.row( i ) );
+      }
     }
 
-    // remove duplicate points
-    vector<DMatch>::iterator it_good_match_train = good_match_vector.begin();
-    vector<DMatch>::iterator it_good_match_query;
-
-    for ( ; it_good_match_train != good_match_vector.end()-1; ){
-        if ( it_good_match_train == good_match_vector.end()) break;
-        bool find_duplicate = false;
-
-        for ( it_good_match_query = it_good_match_train+1; it_good_match_query != good_match_vector.end(); ){
-            if ( (*it_good_match_query).trainIdx == (*it_good_match_train).trainIdx ){
-                find_duplicate = true;
-
-                if ( (*it_good_match_query).distance < (*it_good_match_train).distance )
-                    good_match_vector.erase(it_good_match_train);
-                else{
-                    good_match_vector.erase(it_good_match_query);
-                    it_good_match_train++;
-                }
-
-                break;
-            }
-            else
-                it_good_match_query++;
-        }
-
-        if (!find_duplicate) it_good_match_train++;
+    for ( int j = 0; j < _curr_keyLine.size(); j++ )
+    {
+      if( _curr_keyLine[j].octave == 0 )
+      {
+        lbd_octave2.push_back( _curr_keyLine[j] );
+        right_lbd.push_back( _curr_descriptor.row( j ) );
+      }
     }
 
-    // to visualize tracked line features
-    vector<DMatch>::iterator it_good_match = good_match_vector.begin();
-    m_matched_keyLines.clear();
+    std::vector<DMatch> matches;
+    bd_match->match(_prev_descriptor, _curr_descriptor, matches);
+    std::vector<DMatch> good_matches;
 
-    for ( ; it_good_match != good_match_vector.end(); ){
-        if ( FindMatchedLine(_prev_keyLine.at(it_good_match->queryIdx),
-                            _curr_keyLine.at(it_good_match->trainIdx), 20, 50, 0.2) ){
-            m_matched_keyLines.push_back(_curr_keyLine.at(it_good_match->trainIdx));
 
-            if ( m_matched_descriptor.rows == 0)
-                m_matched_descriptor = _curr_descriptor.row(it_good_match->trainIdx);
-            else
-                vconcat(m_matched_descriptor, _curr_descriptor.row(it_good_match->trainIdx), m_matched_descriptor);
-
-            it_good_match++;
-        }
-        else
-            good_match_vector.erase(it_good_match);
+    for ( int i = 0; i < (int) matches.size(); i++ )
+    {
+        if(norm(Mat(_prev_keyLine[matches[i].queryIdx].getStartPoint()),
+                Mat(_curr_keyLine[matches[i].trainIdx].getStartPoint())) > 30 ||
+           norm(Mat(_prev_keyLine[matches[i].queryIdx].getEndPoint()),
+                Mat(_curr_keyLine[matches[i].trainIdx].getEndPoint())) > 30)
+            continue;
+        good_matches.push_back( matches[i] );
     }
+    _good_match_vector = good_matches;
 
-    _good_match_vector = good_match_vector;
+
+//    cout << _good_match_vector.size() << ", " << good_matches.size() << endl;
+
+
+//    cv::Mat outImg;
+//    cv::Mat scaled1, scaled2;
+//    std::vector<char> mask( matches.size(), 1 );
+//    Mat pre_img, cur_img;
+//    cvtColor(curr_img, pre_img, CV_GRAY2BGR);
+//    cvtColor(forw_img, cur_img, CV_GRAY2BGR);
+//    drawLineMatches( pre_img, lbd_octave1, cur_img, lbd_octave2, good_matches, outImg, Scalar::all( -1 ), Scalar::all( -1 ), mask,
+//                       DrawLinesMatchesFlags::DEFAULT );
+//    imshow( "Matches", outImg );
+//    waitKey(1);
 }
 
 LineKL MakeKeyLine( cv::Point2f start_pts, cv::Point2f end_pts, size_t cols ){
@@ -636,6 +680,14 @@ LineKL MakeKeyLine( cv::Point2f start_pts, cv::Point2f end_pts, size_t cols ){
     //    keyLine.numOfPixels;
 
     // Set start point(and octave)
+    if(start_pts.x > end_pts.x)
+    {
+        cv::Point2f tmp_pts;
+        tmp_pts = start_pts;
+        start_pts = end_pts;
+        end_pts = tmp_pts;
+    }
+
     keyLine.startPointX = (int)start_pts.x;
     keyLine.startPointY = (int)start_pts.y;
     keyLine.sPointInOctaveX = start_pts.x;
@@ -949,7 +1001,7 @@ void LineFeatureTracker::lineMergingTwoPhase( Mat &prev_img, Mat &cur_img, vecto
 
             double length = norm(Mat(start_predict_pts), Mat(end_predict_pts));
 
-            if (length > 50)
+            if (length > 10)
             {
                 // If the linew have the same class_id, it can't be matched.
                 // Therefore, when new line is inserted the vector, it should be changed the class_id.
@@ -996,13 +1048,44 @@ void LineFeatureTracker::lineMergingTwoPhase( Mat &prev_img, Mat &cur_img, vecto
 
 void LineFeatureTracker::lineExtraction( Mat &cur_img, vector<LineKL> &keyLine, Mat &descriptor)
 {
+//    line_descriptor::BinaryDescriptor::EDLineDetector;
     keyLine.clear();
     Ptr<LineBD> lineBiDes = LineBD::createBinaryDescriptor();
     Ptr<line_descriptor::LSDDetector> lineLSD = line_descriptor::LSDDetector::createLSDDetector();
     Mat keyLine_mask = Mat::ones(forw_img.size(), CV_8UC1);
-
 //    lineLSD->detect(cur_img, keyLine, 2, 2, keyLine_mask);
-    lineBiDes->detect(cur_img, keyLine);
+    TicToc t_r;
+//    lineBiDes->detect(cur_img, keyLine);
+//    double t1 = t_r.toc();
+    upm::Segments segs = elsed.detect(forw_img);
+//    cout<< t_r.toc() << endl;
+//    cout << t1 << " , " << t2 << endl;
+//    Mat tmp_img1, tmp_img2;
+//    cvtColor(forw_img, tmp_img1, CV_GRAY2BGR);
+//    cvtColor(forw_img, tmp_img2, CV_GRAY2BGR);
+//    for(int i = 0; i < forw_keyLine.size(); i++)
+//        line(tmp_img1, forw_keyLine[i].getStartPoint(), forw_keyLine[i].getEndPoint(), Scalar(0,255,0), 2);
+//    for(int i = 0; i < segs.size(); i++)
+//    {
+//        upm::Segment seg = segs[i];
+//        line(tmp_img2, cv::Point2f(seg[0], seg[1]), cv::Point2f(seg[2], seg[3]), Scalar(0,255,0), 2);
+//    }
+//    Mat compare;
+//    hconcat(tmp_img1, tmp_img2, compare);
+//    imshow("1", compare);
+//    waitKey(1);
+
+    int line_id = 0;
+    for(unsigned int i = 0; i < segs.size(); i++)
+    {
+        LineKL kl = MakeKeyLine(cv::Point2f(segs[i][0], segs[i][1]), cv::Point2f(segs[i][2], segs[i][3]), cur_img.cols);
+        if(kl.lineLength < 40)
+            continue;
+        kl.class_id = line_id;
+        line_id++;
+        keyLine.push_back(kl);
+
+    }
     if(keyLine.size() > 0)
        lineBiDes->compute(cur_img, keyLine, descriptor);
 
@@ -1017,13 +1100,13 @@ void LineFeatureTracker::lineExtraction( Mat &cur_img, vector<LineKL> &keyLine, 
     int idx = 0;
 
 
-    Mat img1 = cur_img.clone();
-    Mat img2 = cur_img.clone();
+//    Mat img1 = cur_img.clone();
+//    Mat img2 = cur_img.clone();
 
-    cvtColor(img1, img1, CV_GRAY2BGR);
-    cvtColor(img2, img2, CV_GRAY2BGR);
-    for(auto &it : keyLine)
-        line(img1, it.getStartPoint(), it.getEndPoint(),Scalar(rand()%255,rand()%255,rand()%255), 2);
+//    cvtColor(img1, img1, CV_GRAY2BGR);
+//    cvtColor(img2, img2, CV_GRAY2BGR);
+//    for(auto &it : keyLine)
+//        line(img1, it.getStartPoint(), it.getEndPoint(),Scalar(rand()%255,rand()%255,rand()%255), 2);
 
 //    bool endflag = false;
 //    for(int i = 0; i < int(keyLine.size()); i++)
@@ -1109,57 +1192,51 @@ void LineFeatureTracker::lineExtraction( Mat &cur_img, vector<LineKL> &keyLine, 
 //    }
 
 
-    for (;it_keyLine != keyLine.end();){
-        double d = norm( Mat((*it_keyLine).getStartPoint()), Mat((*it_keyLine).getEndPoint()) );
-        KeyLine& kl = *it_keyLine;
+//    for (;it_keyLine != keyLine.end();){
+//        double d = norm( Mat((*it_keyLine).getStartPoint()), Mat((*it_keyLine).getEndPoint()) );
+//        KeyLine& kl = *it_keyLine;
 
-        ///// NEED TO CHECK --> min? (KWANG YIK)
-        float srt_x_at_max_y =  ((keyLine_mask.rows - 1) - kl.startPointY)*(kl.endPointX - kl.startPointX)/(kl.endPointY - kl.startPointY) + kl.startPointX;
-        float end_x_at_max_y =  ((keyLine_mask.rows - 1) - kl.endPointY)*(kl.endPointX - kl.startPointX)/(kl.endPointY - kl.startPointY) + kl.endPointX;
-        float srt_y_at_max_x =  ((keyLine_mask.cols - 1) - kl.startPointX)*(kl.endPointY - kl.startPointY)/(kl.endPointX - kl.startPointX) + kl.startPointY;
-        float end_y_at_max_x =  ((keyLine_mask.cols - 1) - kl.endPointX)*(kl.endPointY - kl.startPointY)/(kl.endPointX - kl.startPointX) + kl.endPointY;
+//        ///// NEED TO CHECK --> min? (KWANG YIK)
+//        float srt_x_at_max_y =  ((keyLine_mask.rows - 1) - kl.startPointY)*(kl.endPointX - kl.startPointX)/(kl.endPointY - kl.startPointY) + kl.startPointX;
+//        float end_x_at_max_y =  ((keyLine_mask.rows - 1) - kl.endPointY)*(kl.endPointX - kl.startPointX)/(kl.endPointY - kl.startPointY) + kl.endPointX;
+//        float srt_y_at_max_x =  ((keyLine_mask.cols - 1) - kl.startPointX)*(kl.endPointY - kl.startPointY)/(kl.endPointX - kl.startPointX) + kl.startPointY;
+//        float end_y_at_max_x =  ((keyLine_mask.cols - 1) - kl.endPointX)*(kl.endPointY - kl.startPointY)/(kl.endPointX - kl.startPointX) + kl.endPointY;
 
-        if((int)kl.startPointX > keyLine_mask.cols - 1)
-        {
-            kl.startPointX = srt_x_at_max_y;
-        }
-        if((int)kl.startPointY > keyLine_mask.rows - 1)
-        {
-            kl.startPointY = srt_y_at_max_x;
-        }
-        if((int)kl.endPointX > keyLine_mask.cols - 1)
-        {
-            kl.endPointX = end_x_at_max_y;
-        }
-        if((int)kl.endPointY > keyLine_mask.rows - 1)
-        {
-            kl.endPointY = end_y_at_max_x;
-        }
-        //due to imprecise floating point scaling in the pyramid a little overflow can occur in line coordinates,
-        //especially on big images. It will be fixed here
-        //kl.startPointX = (float)std::min((int)kl.startPointX, keyLine_mask.cols - 1);
-        //kl.startPointY = (float)std::min((int)kl.startPointY, keyLine_mask.rows - 1);
-        //kl.endPointX = (float)std::min((int)kl.endPointX, keyLine_mask.cols - 1);
-        //kl.endPointY = (float)std::min((int)kl.endPointY, keyLine_mask.rows - 1);
+//        if((int)kl.startPointX > keyLine_mask.cols - 1)
+//        {
+//            kl.startPointX = srt_x_at_max_y;
+//        }
+//        if((int)kl.startPointY > keyLine_mask.rows - 1)
+//        {
+//            kl.startPointY = srt_y_at_max_x;
+//        }
+//        if((int)kl.endPointX > keyLine_mask.cols - 1)
+//        {
+//            kl.endPointX = end_x_at_max_y;
+//        }
+//        if((int)kl.endPointY > keyLine_mask.rows - 1)
+//        {
+//            kl.endPointY = end_y_at_max_x;
+//        }
+//        //due to imprecise floating point scaling in the pyramid a little overflow can occur in line coordinates,
+//        //especially on big images. It will be fixed here
+//        //kl.startPointX = (float)std::min((int)kl.startPointX, keyLine_mask.cols - 1);
+//        //kl.startPointY = (float)std::min((int)kl.startPointY, keyLine_mask.rows - 1);
+//        //kl.endPointX = (float)std::min((int)kl.endPointX, keyLine_mask.cols - 1);
+//        //kl.endPointY = (float)std::min((int)kl.endPointY, keyLine_mask.rows - 1);
 
-        if((keyLine_mask.at < uchar > ( (int) kl.startPointY, (int) kl.startPointX ) == 0 ||
-             keyLine_mask.at < uchar > ( (int) kl.endPointY, (int) kl.endPointX ) == 0)
-            || kl.lineLength < 50 || kl.octave != 0){
-            keyLine.erase(it_keyLine);
-            util.DeleteCVMatRow(descriptor, idx);
-        }
-        else{
-            it_keyLine++;
-            idx++;
-        }
-    }
-
-    for(auto &it : keyLine)
-        line(img2, it.getStartPoint(), it.getEndPoint(),Scalar(0,0,255));
-    Mat img;
-//    hconcat(img1, img2, img);
-//    imshow("line merged", img1);
-//    waitKey(1);
+//        if((keyLine_mask.at < uchar > ( (int) kl.startPointY, (int) kl.startPointX ) == 0 ||
+//             keyLine_mask.at < uchar > ( (int) kl.endPointY, (int) kl.endPointX ) == 0)
+//            || kl.lineLength < 50
+//                || kl.octave != 0){
+//            keyLine.erase(it_keyLine);
+//            util.DeleteCVMatRow(descriptor, idx);
+//        }
+//        else{
+//            it_keyLine++;
+//            idx++;
+//        }
+//    }
 }
 
 void LineFeatureTracker::normalizePoints(){

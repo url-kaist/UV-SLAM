@@ -26,6 +26,7 @@
 #include "math.h"
 #include "utility.h"
 #include "highgui.h"
+#include "ELSED.h"
 
 using namespace std;
 using namespace camodocal;
@@ -97,7 +98,7 @@ class LineFeatureTracker
     CvMat* measurement = cvCreateMat(2, 1, CV_32FC1);
 
     // dynamic params (4), measurement params (2), control params (0)
-    CvKalman* kalman  = cvCreateKalman(4, 2, 0);
+//    CvKalman* kalman  = cvCreateKalman(4, 2, 0);
 
     void CannyDetection(Mat &src, vector<line_descriptor::KeyLine> &keylines);
     bool getPointChain( const Mat & img, const Point2f pt, Point2f * chained_pt, int & direction, int step );
