@@ -17,7 +17,7 @@ For more details, please refer to: https://doi.org/10.1109/LRA.2022.3140816
 
 ## Results
 Mapping results for *MH_05_difficult* in the [EuRoC datasets](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets)
-All mapping results for the EuRoC datasets is available in [here](https://github.com/tp02134/UV-SLAM/blob/main/mapping_result.pdf)
+All mapping results for the EuRoC datasets is available in [here](https://github.com/url-kaist/UV-SLAM/tree/main/supplement/mapping_result.pdf)
 
 <center>
 
