@@ -37,7 +37,7 @@ All mapping results for the EuRoC datasets is available in [here](https://github
 ### 2. Build
 ```
 cd ~/<your_workspace>/src
-git clone --reculsive https://github.com/url-kaist/UV-SLAM.git
+git clone --recursive https://github.com/url-kaist/UV-SLAM.git
 cd ELSED/
 mkdir build && cd build
 cmake .. && make
