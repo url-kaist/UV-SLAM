@@ -21,7 +21,6 @@ ros::Publisher pub_keyframe_line, pub_keyframe_line_stereo;
 ros::Publisher pub_keyframe_line_2d;
 ros::Publisher pub_keyframe_2d_3d;
 ros::Publisher pub_line_margin;
-ros::Publisher pub_line_margin_VR;
 ros::Publisher pub_line_deg;
 ros::Publisher pub_line_array;
 ros::Publisher pub_text;
@@ -34,7 +33,6 @@ static Vector3d last_path(0.0, 0.0, 0.0);
 visualization_msgs::Marker key_lines;
 visualization_msgs::Marker map_lines;
 visualization_msgs::Marker margin_lines;
-visualization_msgs::Marker margin_lines_VR;
 visualization_msgs::Marker margin_lines_deg;
 visualization_msgs::MarkerArray text_array;
 
@@ -71,7 +69,6 @@ void registerPub(ros::NodeHandle &n)
     pub_keyframe_line_2d = n.advertise<visualization_msgs::Marker>("keyframe_lines_2d", 1000);
     pub_line_cloud = n.advertise<visualization_msgs::Marker>("line_cloud", 1000);
     pub_line_margin = n.advertise<visualization_msgs::Marker>("line_history_cloud", 1000);
-    pub_line_margin_VR = n.advertise<visualization_msgs::Marker>("line_history_cloud_vr", 1000);
     pub_line_deg = n.advertise<visualization_msgs::Marker>("degenerated_line", 1000);
     pub_line_array = n.advertise<visualization_msgs::MarkerArray>("line_history_clouds", 1000);
     pub_text = n.advertise<visualization_msgs::MarkerArray>("line_text",1000);
@@ -468,20 +465,6 @@ void pubLineCloud(const Estimator &estimator, std_msgs::Header &header)
     margin_lines.color.b = 0.0;
     margin_lines.color.a = 1.0;
 
-    margin_lines_VR.header = header;
-    margin_lines_VR.header.frame_id = "world";
-    margin_lines_VR.ns = "margin_lines_VR";
-    margin_lines_VR.type = visualization_msgs::Marker::LINE_LIST;
-    margin_lines_VR.action = visualization_msgs::Marker::ADD;
-    margin_lines_VR.pose.orientation.w = 1.0;
-    margin_lines_VR.lifetime = ros::Duration(0);
-
-    margin_lines_VR.scale.x = 0.05;
-    margin_lines_VR.color.r = 0.0;
-    margin_lines_VR.color.g = 0.0;
-    margin_lines_VR.color.b = 0.0;
-    margin_lines_VR.color.a = 1.0;
-
     for(auto &it_per_id : estimator.f_manager.line_feature)
     {
         int used_num = it_per_id.line_feature_per_frame.size();
@@ -601,9 +584,6 @@ void pubLineCloud(const Estimator &estimator, std_msgs::Header &header)
 
             margin_lines.points.push_back(sp);
             margin_lines.points.push_back(ep);
-            margin_lines_VR.points.push_back(sp);
-            margin_lines_VR.points.push_back(ep);
-
         }
     }
     pub_text.publish(text_array);
@@ -624,8 +604,6 @@ void pubLineCloud(const Estimator &estimator, std_msgs::Header &header)
     }
 
     pub_line_margin.publish(margin_lines);
-    pub_line_margin_VR.publish(margin_lines_VR);
-
     pub_line_deg.publish(margin_lines_deg);
     publishAll(pub_margin_line_list, margin_line_list);
 }
