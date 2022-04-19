@@ -1,5 +1,5 @@
 # UV-SLAM
-Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping"*, which is published in IEEE RA-L with ICRA'22 presentation option.  
+Official page of *"UV-SLAM: Unconstrained Line-based SLAM Using Vanishing Points for Structural Mapping"*, which is published in IEEE RA-L with ICRA'22 presentation option.
 For more details, please refer to: https://doi.org/10.1109/LRA.2022.3140816
 
 [![journal](https://img.shields.io/badge/RA_L-9672726-4b44ce.svg)](https://ieeexplore.ieee.org/abstract/document/9672726)
@@ -38,19 +38,16 @@ All mapping results for the EuRoC datasets is available in [here](https://github
 ```
 cd ~/<your_workspace>/src
 git clone --recursive https://github.com/url-kaist/UV-SLAM.git
-cd ELSED/
-mkdir build && cd build
-cmake .. && make
-cd ../../
+cd ..
 catkin_make
 source ~/<your_workspace>/devel/setup.bash
 ```
 ### 3. Trouble shooting
-- If you have installed [VINS-mono](https://github.com/HKUST-Aerial-Robotics/VINS-Mono) before, remove the common packages.  
+- If you have installed [VINS-mono](https://github.com/HKUST-Aerial-Robotics/VINS-Mono) before, remove the common packages.
 Example: ```benchmark_publisher```, ```camera_model```, etc
 
 ## Run on EuRoC datasets
-Download [EuRoC MAV Dataset](http://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets).  
+Download [EuRoC MAV Dataset](http://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets).
 Open three terminals and launch the vins_estimator, rviz, and play the bag file, respectively.
 ```
 roslaunch uv_slam euroc.launch
@@ -84,7 +81,7 @@ If you use the algorithm in an academic context, please cite the following publi
 ```
 
 ## Acknowledgements
-We use [VINS-Mono](https://github.com/HKUST-Aerial-Robotics/VINS-Mono) as our baseline code. Thanks Dr. Qin Tong, Prof. Shen etc very much. For line feature extraction, we use [ELSED](https://github.com/iago-suarez/ELSED). For vanishing point extraction, we use [J-linkage](http://www.diegm.uniud.it/fusiello/demo/jlk/) and [2-line exhaustive searching method](https://github.com/xiaohulugo/VanishingPointDetection).  
+We use [VINS-Mono](https://github.com/HKUST-Aerial-Robotics/VINS-Mono) as our baseline code. Thanks Dr. Qin Tong, Prof. Shen etc very much. For line feature extraction, we use [ELSED](https://github.com/iago-suarez/ELSED). For vanishing point extraction, we use [J-linkage](http://www.diegm.uniud.it/fusiello/demo/jlk/) and [2-line exhaustive searching method](https://github.com/xiaohulugo/VanishingPointDetection).
 This work was financially supported in part by Institute of Information & communications Technology Planning & Evaluation (IITP) grant funded by the Korea government(MSIT) (No. 2021-0-00230, development of real·virtual environmental analysis based adaptive interaction technology) and in part by the Defense Challengeable Future Technology Program of Agency for Defense Development, Republic of Korea. The students are supported by Korea Ministry of Land, Infrastructure and Transport (MOLIT) as "Innovative Talent Education Program for Smart City" and BK21 FOUR.
 
 ## Licence
