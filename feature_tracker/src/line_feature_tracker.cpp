@@ -977,8 +977,8 @@ void LineFeatureTracker::lineExtraction( Mat &cur_img, vector<LineKL> &keyLine, 
     for(unsigned int i = 0; i < segs.size(); i++)
     {
         LineKL kl = MakeKeyLine(cv::Point2f(segs[i][0], segs[i][1]), cv::Point2f(segs[i][2], segs[i][3]), cur_img.cols);
-        if(kl.lineLength < 40)
-            continue;
+//        if(kl.lineLength < 40)
+//            continue;
         kl.class_id = line_id;
         line_id++;
         keyLine.push_back(kl);
