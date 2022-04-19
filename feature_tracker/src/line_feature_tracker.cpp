@@ -538,122 +538,20 @@ void LineFeatureTracker::lineMatching( vector<LineKL> &_prev_keyLine, vector<Lin
     Ptr<BinaryDescriptorMatcher> bd_match = BinaryDescriptorMatcher::createBinaryDescriptorMatcher();
     vector<vector<DMatch> > matches_vector;
     auto prev_descriptor = _prev_descriptor.clone();
-    bd_match->knnMatch(prev_descriptor, _curr_descriptor, matches_vector, 5);
-    vector<DMatch> good_match_vector, bad_match_vector;
-
-//    for(int i = 0; i < matches_vector.size(); i++){
-//        double min_d = 1000;
-//        int min_idx = 0;
-
-//        for ( int j = 0; j < matches_vector[i].size(); j++){
-//            if ( matches_vector[i][j].queryIdx == -1 || matches_vector[i][j].trainIdx == -1 )
-//                continue;
-
-//            if ( matches_vector[i][j].queryIdx > (_prev_keyLine.size()-1)
-//                || matches_vector[i][j].trainIdx > (_curr_keyLine.size()-1) )
-//                continue;
-
-//            auto query_line = _prev_keyLine.at(matches_vector[i][j].queryIdx);
-//            auto train_line = _curr_keyLine.at(matches_vector[i][j].trainIdx);
-
-//            Point2f mid_p_query = (query_line.getStartPoint() + query_line.getEndPoint())/2.;
-//            Point2f mid_p_train = (train_line.getStartPoint() + train_line.getEndPoint())/2.;
-
-//            double dist = norm( Mat(mid_p_query), Mat(mid_p_train));
-
-//            if ( min_d > dist ){
-//                min_idx = j;
-//                min_d = dist;
-//            }
-//        }
-
-//        // if ( fabs(mean-matches_vector[i][min_idx].distance) < std_var)
-//        if ( min_d < 1000 )
-//            good_match_vector.push_back(matches_vector[i][min_idx]);
-//    }
-
-//    // remove duplicate points
-//    vector<DMatch>::iterator it_good_match_train = good_match_vector.begin();
-//    vector<DMatch>::iterator it_good_match_query;
-
-//    for ( ; it_good_match_train != good_match_vector.end()-1; ){
-//        if ( it_good_match_train == good_match_vector.end()) break;
-//        bool find_duplicate = false;
-
-//        for ( it_good_match_query = it_good_match_train+1; it_good_match_query != good_match_vector.end(); ){
-//            if ( (*it_good_match_query).trainIdx == (*it_good_match_train).trainIdx ){
-//                find_duplicate = true;
-
-//                if ( (*it_good_match_query).distance < (*it_good_match_train).distance )
-//                    good_match_vector.erase(it_good_match_train);
-//                else{
-//                    good_match_vector.erase(it_good_match_query);
-//                    it_good_match_train++;
-//                }
-
-//                break;
-//            }
-//            else
-//                it_good_match_query++;
-//        }
-
-//        if (!find_duplicate) it_good_match_train++;
-//    }
-
-//    // to visualize tracked line features
-//    vector<DMatch>::iterator it_good_match = good_match_vector.begin();
-//    m_matched_keyLines.clear();
-
-//    for ( ; it_good_match != good_match_vector.end(); ){
-//        if ( FindMatchedLine(_prev_keyLine.at(it_good_match->queryIdx),
-//                            _curr_keyLine.at(it_good_match->trainIdx), 20, 50, 0.2) ){
-//            m_matched_keyLines.push_back(_curr_keyLine.at(it_good_match->trainIdx));
-
-//            if ( m_matched_descriptor.rows == 0)
-//                m_matched_descriptor = _curr_descriptor.row(it_good_match->trainIdx);
-//            else
-//                vconcat(m_matched_descriptor, _curr_descriptor.row(it_good_match->trainIdx), m_matched_descriptor);
-
-//            it_good_match++;
-//        }
-//        else
-//            good_match_vector.erase(it_good_match);
-//    }
-
-//    _good_match_vector = good_match_vector;
-
-    std::vector<KeyLine> lbd_octave1, lbd_octave2;
-    Mat left_lbd, right_lbd;
-    for ( int i = 0; i < _prev_keyLine.size(); i++ )
-    {
-      if( _prev_keyLine[i].octave == 0 )
-      {
-        lbd_octave1.push_back( _prev_keyLine[i] );
-        left_lbd.push_back( _prev_descriptor.row( i ) );
-      }
-    }
-
-    for ( int j = 0; j < _curr_keyLine.size(); j++ )
-    {
-      if( _curr_keyLine[j].octave == 0 )
-      {
-        lbd_octave2.push_back( _curr_keyLine[j] );
-        right_lbd.push_back( _curr_descriptor.row( j ) );
-      }
-    }
 
     std::vector<DMatch> matches;
-    bd_match->match(_prev_descriptor, _curr_descriptor, matches);
+    bd_match->match(prev_descriptor, _curr_descriptor, matches);
     std::vector<DMatch> good_matches;
-
-
     for ( int i = 0; i < (int) matches.size(); i++ )
     {
+        if(matches[i].queryIdx > _prev_keyLine.size() || matches[i].trainIdx > _curr_keyLine.size())
+            continue;
         if(norm(Mat(_prev_keyLine[matches[i].queryIdx].getStartPoint()),
                 Mat(_curr_keyLine[matches[i].trainIdx].getStartPoint())) > 30 ||
            norm(Mat(_prev_keyLine[matches[i].queryIdx].getEndPoint()),
                 Mat(_curr_keyLine[matches[i].trainIdx].getEndPoint())) > 30)
             continue;
+
         good_matches.push_back( matches[i] );
     }
     _good_match_vector = good_matches;
