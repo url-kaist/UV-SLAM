@@ -370,9 +370,9 @@ void pubLineCloud(const Estimator &estimator, std_msgs::Header &header)
 
             Vector4d pi_s_4d, pi_e_4d;
             pi_s_4d.head(3) = pi_s;
-            pi_s_4d(3) = 1;
+            pi_s_4d(3) = 0;
             pi_e_4d.head(3) = pi_e;
-            pi_e_4d(3) = 1;
+            pi_e_4d(3) = 0;
 
             AngleAxisd roll(it_per_id.orthonormal_vec(0), Vector3d::UnitX());
             AngleAxisd pitch(it_per_id.orthonormal_vec(1), Vector3d::UnitY());
@@ -487,9 +487,9 @@ void pubLineCloud(const Estimator &estimator, std_msgs::Header &header)
 
             Vector4d pi_s_4d, pi_e_4d;
             pi_s_4d.head(3) = pi_s;
-            pi_s_4d(3) = 1;
+            pi_s_4d(3) = 0;
             pi_e_4d.head(3) = pi_e;
-            pi_e_4d(3) = 1;
+            pi_e_4d(3) = 0;
 
             AngleAxisd roll(it_per_id.orthonormal_vec(0), Vector3d::UnitX());
             AngleAxisd pitch(it_per_id.orthonormal_vec(1), Vector3d::UnitY());

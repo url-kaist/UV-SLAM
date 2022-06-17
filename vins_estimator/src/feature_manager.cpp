@@ -395,9 +395,9 @@ Matrix4d L_c;
 
         Vector4d pi_s_4d, pi_e_4d;
         pi_s_4d.head(3) = pi_s;
-        pi_s_4d(3) = 1;
+        pi_s_4d(3) = 0;
         pi_e_4d.head(3) = pi_e;
-        pi_e_4d(3) = 1;
+        pi_e_4d(3) = 0;
 
         Vector4d D_s = L_c * pi_s_4d;
         Vector4d D_e = L_c * pi_e_4d;
