@@ -582,7 +582,7 @@ void FeatureManager::triangulateLine(Vector3d Ps[], Matrix3d Rs_estimate[], Vect
 //            continue;
 
         it_per_id.orthonormal_vec.head(3) = Rotation_psi.eulerAngles(0,1,2);
-        it_per_id.orthonormal_vec(3) = atan2(n_w.norm(), d_w.norm());
+        it_per_id.orthonormal_vec(3) = atan2(d_w.norm(), n_w.norm());
 
         index++;
     }
