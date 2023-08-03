@@ -768,11 +768,8 @@ void Estimator::optimization()
     line_loss_function = new ceres::CauchyLoss(0.1);
 
     ceres::LossFunction *vp_loss_function;
-#ifdef UNIT_SPHERE_LOSS
-    vp_loss_function = new ceres::ArctanLoss(0.1);
-#else
-    vp_loss_function = new ceres::CauchyLoss(0.1);
-#endif
+//    vp_loss_function = NULL;
+    vp_loss_function = new ceres::CauchyLoss(1.0);
 
     for (int i = 0; i < WINDOW_SIZE + 1; i++)
     {
@@ -923,7 +920,7 @@ void Estimator::optimization()
             if(it_per_frame.vp(2) == 1)
             {
 //                cout << it_per_frame.vp(2) << endl;
-                ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<VPProjectionFactor, 2, 7, 4>
+                ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<VPProjectionFactor, 1, 7, 4>
                         (new VPProjectionFactor(ric[0], tic[0], it_per_frame.start_point, it_per_frame.end_point, it_per_frame.vp));
                 problem.AddResidualBlock(cost_function, vp_loss_function, para_Pose[imu_j], para_Ortho_plucker[line_feature_index]);
 
@@ -1119,7 +1116,7 @@ void Estimator::optimization()
                     if(it_per_frame.vp(2) == 1)
                     {
         //                cout << it_per_frame.vp(2) << endl;
-                        ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<VPProjectionFactor, 2, 7, 4>
+                        ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<VPProjectionFactor, 1, 7, 4>
                                 (new VPProjectionFactor(ric[0], tic[0], it_per_frame.start_point, it_per_frame.end_point, it_per_frame.vp));
 
                         ResidualBlockInfo *residual_block_info = new ResidualBlockInfo(cost_function, vp_loss_function,

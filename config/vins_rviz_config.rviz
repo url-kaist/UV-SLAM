@@ -31,7 +31,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: tracked image
+    SyncSource: ""
   - Class: rviz/Displays
     Help Height: 78
     Name: Displays
@@ -148,7 +148,7 @@ Visualization Manager:
           Marker Topic: /vins_estimator/camera_pose_visual
           Name: camera_visual
           Namespaces:
-            CameraPoseVisualization: true
+            {}
           Queue Size: 100
           Value: true
         - Alpha: 1
@@ -166,9 +166,7 @@ Visualization Manager:
           Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
-          Max Intensity: 4096
           Min Color: 0; 0; 0
-          Min Intensity: 0
           Name: current_point
           Position Transformer: XYZ
           Queue Size: 10
@@ -193,7 +191,7 @@ Visualization Manager:
           Color: 255; 255; 255
           Color Transformer: FlatColor
           Decay Time: 3000
-          Enabled: false
+          Enabled: true
           Invert Rainbow: true
           Max Color: 0; 0; 0
           Max Intensity: 4096
@@ -210,28 +208,19 @@ Visualization Manager:
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: false
-          Value: false
+          Value: true
         - Class: rviz/TF
           Enabled: true
           Frame Timeout: 15
           Frames:
             All Enabled: true
-            body:
-              Value: true
-            camera:
-              Value: true
-            world:
-              Value: true
           Marker Scale: 1
           Name: TF
           Show Arrows: true
           Show Axes: true
           Show Names: true
           Tree:
-            world:
-              body:
-                camera:
-                  {}
+            {}
           Update Interval: 0
           Value: true
         - Class: rviz/Marker
@@ -239,25 +228,17 @@ Visualization Manager:
           Marker Topic: /vins_estimator/line_cloud
           Name: current_line
           Namespaces:
-            key_lines: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
           Enabled: true
-          Marker Topic: /vins_estimator/line_history_cloud_vr
+          Marker Topic: /vins_estimator/line_history_cloud
           Name: history_line
-          Namespaces:
-            margin_lines_VR: true
-          Queue Size: 100
-          Value: true
-        - Class: rviz/Marker
-          Enabled: false
-          Marker Topic: /vins_estimator/degenerated_line
-          Name: degenerated line
           Namespaces:
             {}
           Queue Size: 100
-          Value: false
+          Value: true
       Enabled: true
       Name: VIO
     - Class: rviz/Group
@@ -325,7 +306,7 @@ Visualization Manager:
           Queue Size: 100
           Value: true
         - Class: rviz/Image
-          Enabled: false
+          Enabled: true
           Image Topic: /pose_graph/match_image
           Max Value: 1
           Median window: 5
@@ -335,7 +316,7 @@ Visualization Manager:
           Queue Size: 2
           Transport Hint: raw
           Unreliable: false
-          Value: false
+          Value: true
         - Class: rviz/Marker
           Enabled: true
           Marker Topic: /pose_graph/key_odometrys

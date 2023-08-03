@@ -56,12 +56,11 @@ struct VPProjectionFactor
         Matrix<T, 3, 1> n_c = l_c.template block<3,1>(0,0);
         Matrix<T, 3, 1> d_c = l_c.template block<3,1>(3,0);
 
-        Matrix<T, 2, 1> d_c_2d(d_c(0)/d_c(2), d_c(1)/d_c(2));
-        Matrix<T, 2, 1> vp_2d(vp(0), vp(1));
+        Matrix<T, 3, 1> vp_3d = vp.template cast<T>();
 
-        residuals[0] = T(VP_FACTOR) * (d_c_2d(0) - vp_2d(0));
-        residuals[1] = T(VP_FACTOR) * (d_c_2d(1) - vp_2d(1));
-//        residuals[0] = T(VP_FACTOR) * (d_c_2d - vp_2d).norm();
+        residuals[0] = T(VP_FACTOR) * acos(abs(d_c.dot(vp_3d)/(d_c.norm()*vp_3d.norm())));
+
+//        residuals[0] = T(VP_FACTOR) * (d_c_2d(0) - vp_2d(0));
 
         return true;
     }
